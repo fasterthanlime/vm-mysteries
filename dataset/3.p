@@ -1,0 +1,19 @@
+# Plots vm-mystery3
+set terminal png
+
+#general coordinates
+set autoscale
+#set xr [1332273844.895426918:1332273845.596836927]
+set yr [000000000:00200000000]
+set output "vm-mystery3-detailed.png"
+plot "vm-mystery3-faultlog-write" using 1:4 title "write" with points, "vm-mystery3-faultlog-read" using 1:4 title "read" with lines, "vm-mystery3-faultlog-write" using 1:4 title "write order" with lines
+
+#general but with read on top
+set output "vm-mystery3-detailed-read-on-top.png"
+plot "vm-mystery3-faultlog-write" using 1:4 title "write" with points, "vm-mystery3-faultlog-read" using 1:4 title "read" with lines
+
+#zoom coordinates
+set yr [000000000:00200000000]
+set xr [1332273846.088836927:1332273846.096836927]
+plot "vm-mystery3-faultlog-write" using 1:4 title "write" with points, "vm-mystery3-faultlog-read" using 1:4 title "read" with lines, "vm-mystery3-faultlog-write" using 1:4 title "write order" with lines
+set output "vm-mystery3-detailed-zoom.png"

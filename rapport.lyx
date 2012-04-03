@@ -1,0 +1,610 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass amsart
+\use_default_options true
+\begin_modules
+theorems-ams
+eqs-within-sections
+figs-within-sections
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 2
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Data Base Assignment 2
+\end_layout
+
+\begin_layout Author
+Ismaïl Amrani
+\begin_inset Newline newline
+\end_inset
+
+Amos Wenger
+\begin_inset Newline newline
+\end_inset
+
+Sébastien Zurfluh
+\end_layout
+
+\begin_layout Part
+Introduction
+\end_layout
+
+\begin_layout Standard
+In this paper we will take insight at virtual memory and page faults in
+ order to better understand the happenings in the kernel and processes.
+ We will observe four different mystery binaries which exhibit a certain
+ memory access behavior running under a modified kernel, which has been
+ instrumented for logging page faults.
+ For every binary, we'll analyze the log file and generate plots, which
+ show the page fault pattern.
+\end_layout
+
+\begin_layout Part
+Collected data of your analysis runs.
+ 
+\end_layout
+
+\begin_layout Standard
+The collected data can be found annexed to this file.
+ The 4 fault logs are named vm-mystery*-faultlog with * it's number.
+\end_layout
+
+\begin_layout Part
+A selection of graphs you produced.
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery1-detailed.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery1-detailed-zoom.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery1-detailed-zoom5.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery2-detailed.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery2-detailed-zoom2.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery2-detailed-zoom3.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery3-detailed.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery3-detailed-zoom.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery3-detailed-read-on-top.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery4-detailed.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Graphics
+	filename plots/vm-mystery4-detailed-zoom.png
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Part
+Analysis
+\end_layout
+
+\begin_layout Section
+Comparison between the mystery binaries
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<column alignment="right" valignment="top" width="0">
+<column alignment="right" valignment="top" width="0">
+<column alignment="right" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+VM
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+runtime
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+virtual memory span
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+virtual memory start
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+page fault number
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $2.2\cdot10^{7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1.073\cdot10^{9}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5214
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $2.1\cdot10^{7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5212
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.385
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $2.0\cdot10^{7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5124
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.03
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $0.3\cdot10^{7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Quotes eld
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+119
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+the mystery binaries, regarding virtual memory?
+\end_layout
+
+\begin_layout Section
+accesses
+\end_layout
+
+\begin_layout Standard
+The first two binaries are following a linear access to the memory.
+ The third is quite randomised.
+ The fourth seems to restrain itself to three small non-contiguous spaces
+ going back and fourth inside and in between those.
+\end_layout
+
+\begin_layout Section
+memory regions
+\end_layout
+
+\begin_layout Standard
+At the beginning and the end of the page fault logs, there are some access
+ to the 
+\begin_inset Formula $4\cdot10^{6}-6\cdot10^{6}$
+\end_inset
+
+.
+ This seems to be the place in the virtual memory where the binary is stored
+ (might be initialisation or finalisation of the program variables).
+ Most of the other page faults are located in the same location in the virtual
+ memory (see the comparison table).
+ Each binary seem to have been allocated roughly the same space in the virtual
+ memory.
+ The last binary (vm-mystery4) differs slightly as it's mostly page faulting
+ on reads.
+ It's using a thinner slice of virtual memory than the others (a fifth).
+\end_layout
+
+\begin_layout Section
+Is there a correlation between page faults and run time? How are disk accesses
+ involved?
+\end_layout
+
+\begin_layout Standard
+Again the last binary diverges from the rest.
+ It has 1/50th the number of page fault from the others, and a runtime going
+ from the tenth to the 1/30th.
+ We may conclude hastily that the runtime is proportional to the number
+ of page fault.
+\end_layout
+
+\begin_layout Standard
+With a smaller swap size the binaries which terminates because of a lack
+ of space will terminate sooner.
+\end_layout
+
+\begin_layout Section
+Speculate about the algorithms/code patterns used by the binaries.
+ 
+\end_layout
+
+\begin_layout Standard
+We may understand, following the linear accesses in the first and second
+ binary, that the programm is using very big stacks.
+ The first binary is even using two of them.
+ From those we can also speculate that the page size is 4Kb as the faults
+ are distant from that amount.
+ 
+\end_layout
+
+\begin_layout Standard
+The first binary writes a good load of bytes going back and forth between
+ two stack (between two memory addresses).
+ It writes 4 times more on one of the stack (the lower one in memory) than
+ on the other.
+ It stops probably by a lack of swap space.
+\end_layout
+
+\begin_layout Standard
+The second binary writes continuously on the disk until it is stopped, again,
+ probably by a lack of swap space.
+\end_layout
+
+\begin_layout Standard
+The third binary apparently randomly on the virtual memory.
+ If we take a closer look, the accesses are spread on all of the allocated
+ space and do not overlap, which gives us a hint of an algorithm (see graph
+ 8).
+\end_layout
+
+\begin_layout Standard
+The fourth binary reads and writes in three tables.
+\end_layout
+
+\begin_layout Part
+Summary
+\end_layout
+
+\begin_layout Standard
+The page faults takes away processing time, thus avoiding them may give
+ a huge gain in time.
+ The algorithm used by the linux kernel 2.6.33 (least recently used) may not
+ be the best fit for the binaries we've run.
+\end_layout
+
+\end_body
+\end_document
